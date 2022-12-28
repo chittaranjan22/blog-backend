@@ -83,11 +83,23 @@ public class CommentController {
 	{
 		try
 		{
+			if(this.commentRepository.findById(comment.getCommentId()).isPresent())
+			{
+			Comment existingComment=this.commentRepository.findById(comment.getCommentId()).get();
+			existingComment.setContent(comment.getContent());
 			this.service.addComment(comment);
 			Map<String,String> response=new HashMap<String,String>();
 			response.put("status", "success");
 			response.put("message", "Comment updated!!");
 			return new ResponseEntity<Map<String,String>>(response, HttpStatus.CREATED);
+			}
+			else
+			{
+				Map<String,String> response=new HashMap<String,String>();
+				response.put("status", "failed");
+				response.put("message", "Comment not found!!");
+				return new ResponseEntity<Map<String,String>>(response, HttpStatus.NOT_FOUND);
+			}
 		}
 		catch(Exception e)
 		{
@@ -136,5 +148,12 @@ public class CommentController {
 	{
 		return new ResponseEntity<List<Comment>>(this.commentRepository.findAll(),HttpStatus.OK);
 	}
+	
+	@GetMapping("/getcomment/{commentId}")
+	public ResponseEntity<Comment> getCommentByCommentId(@PathVariable("commentId") long commentId)
+	{
+		return new ResponseEntity<Comment>(this.commentRepository.findById(commentId).get(),HttpStatus.OK);
+	}
+	
 	
 }

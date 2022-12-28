@@ -1,10 +1,12 @@
 package org.blog.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.blog.model.User;
+import org.blog.repository.UserRepository;
 import org.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,9 @@ public class UserController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private UserRepository repository; 
  	
 	@PostMapping("/signup")
 	public ResponseEntity<Map<String,String>> singup(@RequestBody User user)
@@ -65,6 +70,12 @@ public class UserController {
 			response.put("message", "User email does not exist");
 			return new ResponseEntity<Map<String,String>>(response,HttpStatus.NOT_FOUND);
 		}
+	}
+	
+	@GetMapping("/users")
+	public ResponseEntity<List<User>> getAllUSers()
+	{
+		return new ResponseEntity<List<User>>(this.repository.findAll(),HttpStatus.OK);
 	}
 	
 }
